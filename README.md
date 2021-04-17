@@ -3,4 +3,5 @@
 The full question is attached in the relevant folder.
 
 ## HW3
-* Smoothing, sharpening, 2d-convolution 
+1- Smoothing, sharpening, 2d-convolution 
+2- Filterning (linear and non-linear)

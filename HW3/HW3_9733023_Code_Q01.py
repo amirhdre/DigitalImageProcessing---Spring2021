@@ -66,14 +66,14 @@ sharpening2 = original + detail
 sharped2 = convolution2d(m, sharpening2)
 
 
-# fig, ax = plt.subplots(figsize=(8,8))
-# ax.title.set_text('Original Matrix')
-# ax.imshow(m)
-# for (j, i), val in np.ndenumerate(m):
-#     label = f'{val:.2f}'
-#     ax.text(i,j,label,ha='center',va='center',fontsize=9)
-# ax.axis('off')
-# plt.show()
+fig, ax = plt.subplots(figsize=(8,8))
+ax.title.set_text('Original Matrix')
+ax.imshow(m)
+for (j, i), val in np.ndenumerate(m):
+    label = f'{val:.2f}'
+    ax.text(i,j,label,ha='center',va='center',fontsize=9)
+ax.axis('off')
+plt.show()
 
 
 fig, ax = plt.subplots(4,2,figsize=(4,10))
