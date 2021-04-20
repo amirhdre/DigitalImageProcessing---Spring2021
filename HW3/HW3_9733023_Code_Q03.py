@@ -1,6 +1,6 @@
 '''
 ___OVERVIEW___
-CODE FOR QUESTION 2 - HW 3
+CODE FOR QUESTION 3 - HW 3
 
 ___SUMMARY___
 Noise reduction with avg and median filters
