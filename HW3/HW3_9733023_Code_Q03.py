@@ -38,6 +38,9 @@ Intensity transformations:
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+import os
+import matplotlib.image as mpimg # to read image
+
 
 def filter(image ,mode="averaging", size=3, padding=1, stride=1):   
     
@@ -87,23 +90,23 @@ image = cv2.imread("retina_image.jpg", flags=cv2.IMREAD_GRAYSCALE)
 avg3x3 = filter(image, mode='averaging')
 med3x3 = filter(image, mode='median')
 
-fig, ax = plt.subplots(1,3,figsize=(6,3))
-st = fig.suptitle("Average and Median", fontsize="x-large")
+# fig, ax = plt.subplots(1,3,figsize=(6,3))
+# st = fig.suptitle("Average and Median", fontsize="x-large")
 
-ax[0].title.set_text('original')
-ax[0].imshow(image,vmin=image.min(),vmax=image.max(), cmap='gray', interpolation='nearest')
+# ax[0].title.set_text('original')
+# ax[0].imshow(image,vmin=image.min(),vmax=image.max(), cmap='gray', interpolation='nearest')
 
-ax[1].title.set_text('averaging (3x3)')
-ax[1].imshow(avg3x3,vmin=avg3x3.min(),vmax=avg3x3.max(), cmap='gray', interpolation='nearest')
+# ax[1].title.set_text('averaging (3x3)')
+# ax[1].imshow(avg3x3,vmin=avg3x3.min(),vmax=avg3x3.max(), cmap='gray', interpolation='nearest')
 
-ax[2].title.set_text('median (3x3)')
-ax[2].imshow(med3x3,vmin=med3x3.min(),vmax=med3x3.max(), cmap='gray', interpolation='nearest')
+# ax[2].title.set_text('median (3x3)')
+# ax[2].imshow(med3x3,vmin=med3x3.min(),vmax=med3x3.max(), cmap='gray', interpolation='nearest')
 
-for axi in ax.ravel():
-    axi.axis('off')
-plt.tight_layout()
-# plt.savefig('9733023-3_image1.png', bbox_inches='tight')
-plt.show()
+# for axi in ax.ravel():
+#     axi.axis('off')
+# plt.tight_layout()
+# # plt.savefig('9733023-3_image1.png', bbox_inches='tight')
+# plt.show()
 
 
 ################################################################
@@ -128,20 +131,20 @@ def gamma_transformation(image, gamma=1.2):
 
 gamma_corr = gamma_transformation(med3x3,gamma=2/3)
 
-fig, ax = plt.subplots(1,2,figsize=(6,4))
-st = fig.suptitle("Gamma corrected image", fontsize="x-large")
+# fig, ax = plt.subplots(1,2,figsize=(6,4))
+# st = fig.suptitle("Gamma corrected image", fontsize="x-large")
 
-ax[0].title.set_text('original')
-ax[0].imshow(med3x3,vmin=med3x3.min(),vmax=med3x3.max(), cmap='gray', interpolation='nearest')
+# ax[0].title.set_text('original')
+# ax[0].imshow(med3x3,vmin=med3x3.min(),vmax=med3x3.max(), cmap='gray', interpolation='nearest')
 
-ax[1].title.set_text('output $γ=2/3$')
-ax[1].imshow(gamma_corr,vmin=gamma_corr.min(),vmax=gamma_corr.max(), cmap='gray', interpolation='nearest')
+# ax[1].title.set_text('output $γ=2/3$')
+# ax[1].imshow(gamma_corr,vmin=gamma_corr.min(),vmax=gamma_corr.max(), cmap='gray', interpolation='nearest')
 
-for axi in ax.ravel():
-    axi.axis('off')
-plt.tight_layout()
-# plt.savefig('9733023-3_image2.png', bbox_inches='tight')
-plt.show()
+# for axi in ax.ravel():
+#     axi.axis('off')
+# plt.tight_layout()
+# # plt.savefig('9733023-3_image2.png', bbox_inches='tight')
+# plt.show()
 
 ################################################################
 ##### Part 3
@@ -150,24 +153,66 @@ plt.show()
 lap = filter(gamma_corr,mode='laplacian')
 gamma_corr2 = gamma_transformation(lap,gamma=1/3)
 
-fig, ax = plt.subplots(1,3,figsize=(7,3))
-st = fig.suptitle("Gamma corrected image", fontsize="x-large")
+# fig, ax = plt.subplots(1,3,figsize=(7,3))
+# st = fig.suptitle("Gamma corrected image", fontsize="x-large")
 
-ax[0].title.set_text('gamma_corr')
-ax[0].imshow(gamma_corr,vmin=gamma_corr.min(),vmax=gamma_corr.max(), cmap='gray', interpolation='nearest')
+# ax[0].title.set_text('gamma_corr')
+# ax[0].imshow(gamma_corr,vmin=gamma_corr.min(),vmax=gamma_corr.max(), cmap='gray', interpolation='nearest')
 
-ax[1].title.set_text('laplacian')
-ax[1].imshow(lap,vmin=lap.min(),vmax=lap.max(), cmap='gray', interpolation='nearest')
+# ax[1].title.set_text('laplacian')
+# ax[1].imshow(lap,vmin=lap.min(),vmax=lap.max(), cmap='gray', interpolation='nearest')
 
-ax[2].title.set_text('output $γ=1/3$')
-ax[2].imshow(gamma_corr2,vmin=gamma_corr2.min(),vmax=gamma_corr2.max(), cmap='gray', interpolation='nearest')
+# ax[2].title.set_text('output $γ=1/3$')
+# ax[2].imshow(gamma_corr2,vmin=gamma_corr2.min(),vmax=gamma_corr2.max(), cmap='gray', interpolation='nearest')
 
-for axi in ax.ravel():
-    axi.axis('off')
-plt.tight_layout()
-plt.savefig('9733023-3_image3.png', bbox_inches='tight')
-plt.show()
+# for axi in ax.ravel():
+#     axi.axis('off')
+# plt.tight_layout()
+# plt.savefig('9733023-3_image3.png', bbox_inches='tight')
+# plt.show()
 
 ################################################################
 ##### Part 4
 ################################################################
+
+tsteps = np.arange(-2,2,0.01)
+gamma_corr = gamma_corr.astype(float)
+
+def frames_to_video(inputpath='./frames-to-video',outputpath='.',fps=24):
+    image_array = []
+    files = [f for f in os.listdir(inputpath) if os.path.isfile(os.path.join(inputpath, f))]
+    files.sort(key = lambda x: int(float(x[5:-4])))
+    for i in range(len(files)):
+        img_path = inputpath + '/' + files[i]
+        img = mpimg.imread(img_path)
+        size =  (img.shape[1],img.shape[0])
+        img = cv2.resize(img,size)
+        image_array.append(img)
+        
+    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+    out = cv2.VideoWriter(outputpath,cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 25, size)
+    print(len(image_array))
+    for i in range(len(image_array)):
+        out.write(image_array[i])
+    cv2.destroyAllWindows()
+    out.release()
+
+### generate and save frames of video
+# for i,ci in enumerate(tsteps):
+#     frame = gamma_corr + ci*lap
+#     frame[frame>255]=255
+#     frame[frame<0]=0
+#     frame = np.asarray(frame, dtype="uint8") 
+#     fig = plt.imshow(frame, vmin=frame.min(), vmax=frame.max(), cmap='gray', interpolation='nearest')
+#     plt.axis('off')
+#     fig.axes.get_xaxis().set_visible(False)
+#     fig.axes.get_yaxis().set_visible(False)
+#     path = "C:\\Users\\asus\\Google Drive\\University\\Term 6 - 1399-0\\پردازش تصویر\\Assignments\\HW3\\frames-to-video"
+#     plt.savefig(f'{path}\\frame-{i}.png', bbox_inches='tight')
+
+### generate video from frames 
+# inputpath = "C:\\Users\\asus\\Google Drive\\University\\Term 6 - 1399-0\\پردازش تصویر\\Assignments\\HW3\\frames-to-video"
+# outpath = "C:\\Users\\asus\\Google Drive\\University\\Term 6 - 1399-0\\پردازش تصویر\\Assignments\\HW3\\frames-to-video\\video.avi"
+# fps = 20
+# frames_to_video(inputpath, outpath, fps)
+
