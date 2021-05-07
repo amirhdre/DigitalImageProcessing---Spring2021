@@ -1,4 +1,6 @@
 # a dead-simple implementation of 2d-convolution with for loop
+kernel = np.ones((size,size))/size**2
+
 def convolution2d(image, kernel, stride=1, padding=0):
     image = np.pad(image, [(padding, padding), (padding, padding)], mode='constant', constant_values=0)
 
@@ -13,4 +15,5 @@ def convolution2d(image, kernel, stride=1, padding=0):
     for y in range(0, output_height):
         for x in range(0, output_width):
             new_image[y][x] = np.sum(image[y * stride:y * stride + kernel_height, x * stride:x * stride + kernel_width] * kernel).astype(np.float32)
+    
     return new_image
