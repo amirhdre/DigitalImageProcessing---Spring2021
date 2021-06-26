@@ -1,5 +1,7 @@
 # DigitalImageProcessing---Spring2021"
 
+<img src="cover.gif" alt="Generative Art with Processing johnong5015 February 11, 2015">
+
 The full question is attached in the relevant folder. 
 
 ## HW3
@@ -22,3 +24,4 @@ The full question is attached in the relevant folder.
 1. Feature-based registeration with GUI (OpenCV)
 
 <img src="HW6\houghCircs.jpg" alt="houghCircs">
+<img src="HW6\features.jpg" alt="features">
